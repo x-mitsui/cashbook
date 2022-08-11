@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resource :me, only: [:show]
       resources :items
       resources :tags
+      resource :users, only: [:create, :show]
     end
   end
 end
