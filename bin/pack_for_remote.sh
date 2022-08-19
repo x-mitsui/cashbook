@@ -27,7 +27,7 @@ title '打包源代码为压缩文件'
 mkdir $cache_dir
 # 将ruby依赖包缓存到本地
 bundle cache
-tar --exclude="tmp/cache/*" --exclude="tmp/deploy_cache/*"  --exclude="config/credentials/production.key" -czv -f $dist *
+tar --exclude="tmp/cache/*" --exclude="tmp/deploy_cache/*" -czv -f $dist *
 title '创建远程目录'
 # 注意-p参数的作用
 ssh $user@$ip "mkdir -p $deploy_dir/vendor"
