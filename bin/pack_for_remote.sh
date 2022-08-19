@@ -29,6 +29,7 @@ mkdir $cache_dir
 bundle cache
 tar --exclude="tmp/cache/*" --exclude="tmp/deploy_cache/*"  --exclude="config/credentials/production.key" -czv -f $dist *
 title '创建远程目录'
+# 注意-p参数的作用
 ssh $user@$ip "mkdir -p $deploy_dir/vendor"
 title '上传压缩文件'
 scp $dist $user@$ip:$deploy_dir/
@@ -36,6 +37,7 @@ yes | rm $dist
 # scp=ssh copy
 scp $gemfile $user@$ip:$deploy_dir/
 scp $gemfile_lock $user@$ip:$deploy_dir/
+# 文件夹加-r，涉及到递归拷贝
 scp -r $vendor_cache_dir $user@$ip:$deploy_dir/vendor/
 title '上传 Dockerfile'
 scp $current_dir/../config/host.Dockerfile $user@$ip:$deploy_dir/Dockerfile
