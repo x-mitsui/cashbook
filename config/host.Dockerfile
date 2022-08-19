@@ -9,7 +9,8 @@ WORKDIR /mangosteen
 ADD mangosteen-*.tar.gz ./
 # bundle安装包，只安装生成环境的
 RUN bundle config set --local without 'development test'
-RUN bundle install
+## --local 使用bundle cahe后的缓存包
+RUN bundle install --local
 # 运行，puma在生成环境启动项目，ENTRYPOINT：当运行docker run的时候才会执行
 # 这里运行RUN bundle exec puma，会由于开启的是server，导致进程永不结束，因为server是常驻的
 ENTRYPOINT bundle exec puma
