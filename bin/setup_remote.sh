@@ -1,6 +1,7 @@
 user=dzq
 root=/home/$user/deploys/$version
 container_name=mangosteen-prod-1
+# 运行数据库的容器名，也就是将来手动输入的DB_HOST
 db_container_name=db-for-mangosteen
 
 function set_env {
@@ -25,19 +26,21 @@ set_env DB_HOST
 set_env DB_PASSWORD
 set_env RAILS_MASTER_KEY
 
-title '创建网络'
+title '网络操作'
 if [ ! "$(docker network ls | grep network1)" ]; then
   echo "创建network1 ..."
   docker network create network1
 else
   echo "网络network1已经存在"
 fi
+echo '网络操作完毕！'
 
-title '创建数据库'
+title '数据库操作'
 if [ "$(docker ps -aq -f name=^${DB_HOST}$)" ]; then
   echo '已存在数据库'
 else
-  docker run -d --name $DB_HOST \
+  echo '创建数据库'
+  docker run -d --name $db_container_name \
             --network=network1 \
             -e POSTGRES_USER=mangosteen \
             -e POSTGRES_DB=mangosteen_production \
@@ -47,6 +50,7 @@ else
             postgres:14
   echo '创建成功'
 fi
+echo '数据库操作完毕！'
 
 title 'docker build'
 docker build $root -t mangosteen:$version
