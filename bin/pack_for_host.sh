@@ -19,7 +19,7 @@ yes | rm $deploy_dir/mangosteen-*.tar.gz;
 # 最后*代表所有不以“.”开头的文件
 # $dist为打包结果
 
-tar --exclude="tmp/cache/*" -czv -f $dist *
+tar --exclude="tmp/cache/*" --exclude="config/credentials/production.key" -czv -f $dist *
 # p, --parents 需要时创建上层目录，如目录早已存在则不当作错误
 # 将关键四个文件移动到两端共享的文件夹中
 mkdir -p $deploy_dir
