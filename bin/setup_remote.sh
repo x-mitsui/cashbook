@@ -42,8 +42,8 @@ else
   echo '创建数据库'
   docker run -d --name $db_container_name \
             --network=network1 \
-            -e POSTGRES_USER=mangosteen \
             -e POSTGRES_DB=mangosteen_production \
+            -e POSTGRES_USER=mangosteen \
             -e POSTGRES_PASSWORD=$DB_PASSWORD \
             -e PGDATA=/var/lib/postgresql/data/pgdata \
             -v mangosteen-data:/var/lib/postgresql/data \
@@ -78,4 +78,8 @@ case $ans in
     ""     )  echo "no" ;;
 esac
 
+title '删除历史tar等文件'
+shopt -s extglob
+cd /home/$user/deploys
+rm -vrf !($version)
 title '全部执行完毕'
