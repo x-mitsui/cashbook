@@ -15,6 +15,10 @@ resource "验证码" do
 
       # 对结果的期望
       expect(status).to eq 200
+
+      # json = JSON.parse(response_body)
+      # expect(json["code"]).to be_nil
+      expect(response_body).to eq " "
     end
   end
 end
