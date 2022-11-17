@@ -92,3 +92,7 @@ vendor/cache/tzinfo-2.0.5.gem
 vendor/cache/websocket-driver-0.7.5.gem
 vendor/cache/websocket-extensions-0.1.5.gem
 vendor/cache/zeitwerk-2.6.0.gem
+db/schema.rb
+vendor/cache/mustache-1.1.1.gem
+vendor/cache/rspec_api_documentation-6.1.0.gem
+vendor/cache/rspec-3.11.0.gem
