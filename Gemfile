@@ -42,6 +42,8 @@ gem "kaminari"
 # 自动生成api工具
 gem "rspec_api_documentation", path: "./vendor/rspec_api_documentation"
 
+gem "jwt"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
