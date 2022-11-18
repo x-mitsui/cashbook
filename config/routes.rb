@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  get "/", to: "home#index"
   namespace :api do # /api/v1
     namespace :v1 do
       # bin/rails routes 查看生成的路由
