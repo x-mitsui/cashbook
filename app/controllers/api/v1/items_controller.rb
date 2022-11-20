@@ -10,12 +10,16 @@ class Api::V1::ItemsController < ApplicationController
 
     # 自定义每页item数量为33个
     # 测试：curl -X GET http://127.0.0.1:3000/api/v1/items -v
-    item = Item.page(params[:page]).per(33)
-    render json: {
-      resource: item,
-    }
 
-    # Item.count//总条数
+    # 通过时间范围筛选
+    # 测试：rspec spec/requests/api/v1/items_spec.rb:17
+    items = Item.where({ created_at: params[:created_after]..params[:created_before] })
+      .page(params[:page])
+    render json: { resources: items, pager: {
+      page: params[:page],
+      per_page: 100,
+      count: Item.count,
+    } }
   end
 
   def create
