@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "/", to: "home#index"
   namespace :api do # /api/v1
     namespace :v1 do
       # bin/rails routes 查看生成的路由
