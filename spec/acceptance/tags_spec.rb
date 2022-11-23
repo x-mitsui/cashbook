@@ -3,9 +3,11 @@ require "rspec_api_documentation/dsl"
 
 resource "标签" do
   authentication :basic, :auth
+  # 提前准备好的数据，用于查询
   let(:current_user) { User.create email: "1@qq.com" }
   let(:auth) { "Bearer #{current_user.generate_jwt}" }
   get "/api/v1/tags/:id" do
+    # 提前准备好的数据，用于查询
     let (:tag) { Tag.create name: "x", sign: "x", user_id: current_user.id }
     let (:id) { tag.id }
     with_options :scope => :resource do
