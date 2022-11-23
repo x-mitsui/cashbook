@@ -22,4 +22,22 @@ class Api::V1::TagsController < ApplicationController
       render json: { errors: tag.errors }, status: :unprocessable_entity
     end
   end
+
+  def update
+    tag = Tag.find params[:id]
+    # 此写法问题：如果某一个参数为空，数据库就会存一个空的字段
+    # tag.update name: params[:name], sign: params[:sign]
+    # permit：参数只允许接受name和sign，其它一律不接受，
+    ## 另外用户传其中1个参数就改1个参数，对应更新的最后一个测试用例；
+    ## 用户传满2个，就改两个；
+    ## 用户没传就不改。
+    tag.update params.permit(:name, :sign)
+    # nil?只判断是否为空，empty?还会判断数组长度是否为0
+    if tag.errors.empty?
+      # 更新成功
+      render json: { resource: tag }
+    else
+      render json: { errors: tag.errors }, status: :unprocessable_entity
+    end
+  end
 end
