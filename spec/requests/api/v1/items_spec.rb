@@ -113,4 +113,34 @@ RSpec.describe "Items", type: :request do
       expect(json["errors"]["happened_at"][0]).to eq "can't be blank"
     end
   end
+  describe "统计数据" do
+    it "按天分组" do
+      user = User.create! email: "1@qq.com"
+      tag = Tag.create! name: "tag1", sign: "x", user_id: user.id
+      # 注意金额单位为"分"
+      # 数据的创建时间故意混乱，以便测试排序
+      Item.create! amount: 100, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-18T00:00:00+08:00", user_id: user.id
+      Item.create! amount: 200, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-18T00:00:00+08:00", user_id: user.id
+      Item.create! amount: 100, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-20T00:00:00+08:00", user_id: user.id
+      Item.create! amount: 200, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-20T00:00:00+08:00", user_id: user.id
+      Item.create! amount: 100, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-19T00:00:00+08:00", user_id: user.id
+      Item.create! amount: 200, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-19T00:00:00+08:00", user_id: user.id
+      get "/api/v1/items/summary", params: {
+                                     happened_after: "2018-01-01",
+                                     happened_before: "2019-01-01", # 包含mock数据的时间
+                                     kind: "expenses", # 对应mock数据的类型
+                                     group_by: "happened_at",
+                                   }, headers: user.get_auth_header
+      expect(response).to have_http_status 200
+      json = JSON.parse response.body
+      expect(json["groups"].size).to eq 3
+      expect(json["groups"][0]["happened_at"]).to eq "2018-06-18"
+      expect(json["groups"][0]["amount"]).to eq 300
+      expect(json["groups"][1]["happened_at"]).to eq "2018-06-19"
+      expect(json["groups"][1]["amount"]).to eq 300
+      expect(json["groups"][2]["happened_at"]).to eq "2018-06-20"
+      expect(json["groups"][2]["amount"]).to eq 300
+      expect(json["total"]).to eq 900
+    end
+  end
 end
