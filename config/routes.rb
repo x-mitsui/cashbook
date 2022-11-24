@@ -6,7 +6,11 @@ Rails.application.routes.draw do
       resources :validation_codes, only: [:create]
       resource :session, only: [:create, :destroy]
       resource :me, only: [:show]
-      resources :items
+      resources :items do
+        collection do
+          get :summary
+        end
+      end
       resources :tags
       resource :users, only: [:create, :show] # create对应POST，show对应GET
     end
