@@ -44,13 +44,25 @@ class Api::V1::ItemsController < ApplicationController
       .where(kind: params[:kind])
       .where(happened_at: params[:happened_after]..params[:happened_before])
     items.each do |item|
-      key = item.happened_at.in_time_zone("Beijing").strftime("%F") # %F格式相当于%Y-%m-%d
-      hash[key] ||= 0
-      hash[key] += item.amount
+      if params[:group_by] == "happen_at"
+        key = item.happen_at.in_time_zone("Beijing").strftime("%F")
+        hash[key] ||= 0
+        hash[key] += item.amount
+      else
+        item.tags_id.each do |tag_id|
+          key = tag_id
+          hash[key] ||= 0
+          hash[key] += item.amount
+        end
+      end
     end
     groups = hash
-      .map { |key, value| { "happened_at": key, amount: value } }
-      .sort { |a, b| a[:happened_at] <=> b[:happened_at] } # sort后加'!'--sort!就是改变自身
+      .map { |key, value| { "#{params[:group_by]}": key, amount: value } }
+    if params[:group_by] == "happen_at"
+      groups.sort! { |a, b| a[:happen_at] <=> b[:happen_at] }
+    elsif params[:group_by] == "tag_id"
+      groups.sort! { |a, b| b[:amount] <=> a[:amount] }
+    end # sort后加'!'--sort!就是改变自身, 即“A=A.sort”==“A.sort!”
     render json: {
       groups: groups,
       total: items.sum(:amount),
