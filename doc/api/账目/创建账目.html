@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>标签 API</title>
+    <title>账目 API</title>
     <meta charset="utf-8">
     <style>
       
@@ -106,12 +106,55 @@ table th, table td {
   </head>
   <body>
     <div class="container">
-      <h1>标签 API</h1>
+      <h1>账目 API</h1>
 
       <div class="article">
-        <h2>获取标签</h2>
-        <h3>GET /api/v1/tags/:id</h3>
+        <h2>创建账目</h2>
+        <h3>POST /api/v1/items</h3>
 
+          <h3>Parameters</h3>
+          <table class="parameters table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="required">
+                    <span class="name">amount</span>
+                </td>
+                <td>
+                  <span class="description">金额（单位：分）</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="required">
+                    <span class="name">kind</span>
+                </td>
+                <td>
+                  <span class="description">类型</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="required">
+                    <span class="name">happened_at</span>
+                </td>
+                <td>
+                  <span class="description">发生时间</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="required">
+                    <span class="name">tags_id</span>
+                </td>
+                <td>
+                  <span class="description">标签列表（只传ID）</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <h3>Response Fields</h3>
           <table class="response-fields table table-striped table-bordered table-condensed">
@@ -127,39 +170,39 @@ table th, table td {
                     <span class="name">resource[id]</span>
                 </td>
                 <td>
-                  <span class="description">ID</span>
+                  <span class="description">Resource</span>
                 </td>
               </tr>
               <tr>
                 <td>
-                    <span class="name">resource[name]</span>
+                    <span class="name">resource[amount]</span>
                 </td>
                 <td>
-                  <span class="description">名称</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                    <span class="name">resource[sign]</span>
-                </td>
-                <td>
-                  <span class="description">符号</span>
+                  <span class="description">Resource amount</span>
                 </td>
               </tr>
               <tr>
                 <td>
-                    <span class="name">resource[user_id]</span>
+                    <span class="name">resource[kind]</span>
                 </td>
                 <td>
-                  <span class="description">用户ID</span>
+                  <span class="description">Resource kind</span>
                 </td>
               </tr>
               <tr>
                 <td>
-                    <span class="name">resource[deleted_at]</span>
+                    <span class="name">resource[happened_at]</span>
                 </td>
                 <td>
-                  <span class="description">删除时间</span>
+                  <span class="description">Resource happened at</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                    <span class="name">resource[tags_id]</span>
+                </td>
+                <td>
+                  <span class="description">Resource tags</span>
                 </td>
               </tr>
             </tbody>
@@ -169,16 +212,18 @@ table th, table td {
 
             <h4>Headers</h4>
             <pre class="request headers">Version: HTTP/1.0
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOTQsImV4cCI6MTY2OTIxOTk0OX0.qdW9fX0s1peKd5TiLTq5b6e8-F0nA6I4U2kVlpw3wsQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOTIsImV4cCI6MTY2OTIxOTk0OX0.BbMI7RcqziU3AwHQZgc9EqhKI1JXqWP2IxZiZkmP6tA
 Accept: application/json
 Content-Type: application/json
 Host: example.org
 Cookie: </pre>
 
           <h4>Route</h4>
-          <pre class="request route highlight">GET /api/v1/tags/401</pre>
+          <pre class="request route highlight">POST /api/v1/items</pre>
 
 
+            <h4>Body</h4>
+            <pre class="request body">{"amount":9900,"kind":"expenses","happened_at":"2020-10-30T00:00:00+08:00","tags_id":[399,400]}</pre>
 
 
             <h3>Response</h3>
@@ -191,23 +236,28 @@ X-Permitted-Cross-Domain-Policies: none
 Referrer-Policy: strict-origin-when-cross-origin
 Content-Type: application/json; charset=utf-8
 Vary: Accept
-ETag: W/&quot;4e398b443c31e525be6f89f5c9e78711&quot;
+ETag: W/&quot;46def4763f6f0f17f7c49693cb8f1dcd&quot;
 Cache-Control: max-age=0, private, must-revalidate
-X-Request-Id: 5af9647f-ecaf-484e-923a-ae0bccad5387
-X-Runtime: 0.010267
-Content-Length: 156</pre>
+X-Request-Id: f5547fd4-a6bc-453c-b3d2-11ed138104b2
+X-Runtime: 0.009875
+Content-Length: 221</pre>
             <h4>Status</h4>
             <pre class="response status">200 OK</pre>
               <h4>Body</h4>
               <pre class="response body">{
   &quot;resource&quot;: {
-    &quot;id&quot;: 401,
-    &quot;user_id&quot;: 294,
-    &quot;name&quot;: &quot;x&quot;,
-    &quot;sign&quot;: &quot;x&quot;,
-    &quot;delete_at&quot;: null,
-    &quot;created_at&quot;: &quot;2022-11-23T14:12:29.694Z&quot;,
-    &quot;updated_at&quot;: &quot;2022-11-23T14:12:29.694Z&quot;
+    &quot;id&quot;: 23,
+    &quot;user_id&quot;: 292,
+    &quot;amount&quot;: 9900,
+    &quot;note&quot;: null,
+    &quot;tags_id&quot;: [
+      399,
+      400
+    ],
+    &quot;happened_at&quot;: &quot;2020-10-29T16:00:00.000Z&quot;,
+    &quot;created_at&quot;: &quot;2022-11-23T14:12:29.634Z&quot;,
+    &quot;updated_at&quot;: &quot;2022-11-23T14:12:29.634Z&quot;,
+    &quot;kind&quot;: &quot;expenses&quot;
   }
 }</pre>
       </div>

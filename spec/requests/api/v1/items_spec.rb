@@ -13,16 +13,16 @@ RSpec.describe "Items", type: :request do
     end
     it "分页" do
       user1 = User.create email: "1@qq.com"
-      user2 = User.create email: "2@qq.com"
-      11.times { Item.create amount: 100, user_id: user1.id }
-      11.times { Item.create amount: 100, user_id: user2.id }
+      user2 = User.create! email: "2@qq.com"
+      11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user1.id }
+      11.times { Item.create amount: 100, created_at: "2018-01-02", user_id: user2.id }
 
       # post "/api/v1/session", params: { email: user1.email, code: "123456" }
       # json = JSON.parse response.body
       # jwt = json["jwt"]
 
       get "/api/v1/items", headers: user1.get_auth_header
-      p
+
       expect(response).to have_http_status 200
       json = JSON.parse(response.body)
       expect(json["resources"].size).to eq 10
@@ -81,15 +81,36 @@ RSpec.describe "Items", type: :request do
       expect(json["resources"][0]["id"]).to eq item1.id
     end
   end
-  describe "create" do
-    xit "can create an item" do
+  describe "创建账目" do
+    it "未登录创建" do
+      post "/api/v1/items", params: { amount: 100 }
+      expect(response).to have_http_status 401
+    end
+    it "登录后创建" do
+      user = User.create email: "1@qq.com"
+      tag1 = Tag.create name: "tag1", sign: "x", user_id: user.id
+      tag2 = Tag.create name: "tag2", sign: "x", user_id: user.id
       expect {
-        post "/api/v1/items", params: { amount: 99 }
+        post "/api/v1/items", params: { amount: 99 }, headers: user.get_auth_header
+        post "/api/v1/items", params: { amount: 99, tags_id: [tag1.id, tag2.id],
+                                        happened_at: "2018-01-01T00:00:00+08:00" },
+                              headers: user.get_auth_header
       }.to change { Item.count }.by 1
       expect(response).to have_http_status 200
       json = JSON.parse response.body
       expect(json["resource"]["id"]).to be_an(Numeric)
-      expect(json["resource"]["amount"]).to eq 1
+      expect(json["resource"]["amount"]).to eq 99
+      expect(json["resource"]["user_id"]).to eq user.id
+      expect(json["resource"]["happened_at"]).to eq "2017-12-31T16:00:00.000Z"
+    end
+    it "创建时 amount、tags_id、happened_at 必填" do
+      user = User.create email: "1@qq.com"
+      post "/api/v1/items", params: {}, headers: user.get_auth_header
+      expect(response).to have_http_status 422
+      json = JSON.parse response.body
+      expect(json["errors"]["amount"][0]).to eq "can't be blank"
+      expect(json["errors"]["tags_id"][0]).to eq "can't be blank"
+      expect(json["errors"]["happened_at"][0]).to eq "can't be blank"
     end
   end
 end
