@@ -63,4 +63,4 @@ production:
   database: mangosteen_production
   username: mangosteen
   password: <%= ENV["DB_PASSWORD"] %>
-  host: <%= ENV["DB_HOST"] %>
+  host: <%= ENV["DB_HOST"] %> # 可以是本地的也可以是远程的，可灵活配置

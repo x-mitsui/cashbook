@@ -1,4 +1,4 @@
-user=mangosteen
+user=dzq
 root=/home/$user/deploys/$version
 container_name=mangosteen-prod-1
 db_container_name=db-for-mangosteen

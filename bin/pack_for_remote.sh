@@ -1,6 +1,6 @@
 # 注意修改 user 和 服务器公用ip或ip别名
 user=dzq
-ip=118.190.153.174
+ip=59.110.140.199
 
 time=$(date +'%Y%m%d-%H%M%S')
 cache_dir=tmp/deploy_cache

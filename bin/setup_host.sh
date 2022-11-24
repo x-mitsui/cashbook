@@ -32,6 +32,7 @@ set_env DB_PASSWORD
 set_env RAILS_MASTER_KEY '请将 config/credentials/production.key 的内容复制到这里'
 
 title '创建数据库'
+# -f根据条件过滤，-a列出所有容器，-q'静默模式'，只展示容器ID
 if [ "$(docker ps -aq -f name=^${DB_HOST}$)" ]; then
   echo '已存在数据库'
 else
