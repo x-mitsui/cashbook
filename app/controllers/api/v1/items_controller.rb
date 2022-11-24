@@ -44,8 +44,8 @@ class Api::V1::ItemsController < ApplicationController
       .where(kind: params[:kind])
       .where(happened_at: params[:happened_after]..params[:happened_before])
     items.each do |item|
-      if params[:group_by] == "happen_at"
-        key = item.happen_at.in_time_zone("Beijing").strftime("%F")
+      if params[:group_by] == "happened_at"
+        key = item.happened_at.in_time_zone("Beijing").strftime("%F")
         hash[key] ||= 0
         hash[key] += item.amount
       else
@@ -58,8 +58,8 @@ class Api::V1::ItemsController < ApplicationController
     end
     groups = hash
       .map { |key, value| { "#{params[:group_by]}": key, amount: value } }
-    if params[:group_by] == "happen_at"
-      groups.sort! { |a, b| a[:happen_at] <=> b[:happen_at] }
+    if params[:group_by] == "happened_at"
+      groups.sort! { |a, b| a[:happened_at] <=> b[:happened_at] }
     elsif params[:group_by] == "tag_id"
       groups.sort! { |a, b| b[:amount] <=> a[:amount] }
     end # sort后加'!'--sort!就是改变自身, 即“A=A.sort”==“A.sort!”

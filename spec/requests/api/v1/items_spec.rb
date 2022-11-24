@@ -127,10 +127,11 @@ RSpec.describe "Items", type: :request do
       Item.create! amount: 200, kind: "expenses", tags_id: [tag.id], happened_at: "2018-06-19T00:00:00+08:00", user_id: user.id
       get "/api/v1/items/summary", params: {
                                      happened_after: "2018-01-01",
-                                     happened_before: "2019-01-01", # 包含mock数据的时间
-                                     kind: "expenses", # 对应mock数据的类型
+                                     happened_before: "2019-01-01", # 包含以上mock数据的时间
+                                     kind: "expenses", # 对应以上mock数据的类型
                                      group_by: "happened_at",
                                    }, headers: user.get_auth_header
+
       expect(response).to have_http_status 200
       json = JSON.parse response.body
       expect(json["groups"].size).to eq 3
@@ -151,11 +152,11 @@ RSpec.describe "Items", type: :request do
       Item.create! amount: 200, kind: "expenses", tags_id: [tag2.id, tag3.id], happen_at: "2018-06-18T00:00:00+08:00", user_id: user.id
       Item.create! amount: 300, kind: "expenses", tags_id: [tag3.id, tag1.id], happen_at: "2018-06-18T00:00:00+08:00", user_id: user.id
       get "/api/v1/items/summary", params: {
-                                 happened_after: "2018-01-01",
-                                 happened_before: "2019-01-01",
-                                 kind: "expenses",
-                                 group_by: "tag_id",
-                               }, headers: user.generate_auth_header
+                                     happened_after: "2018-01-01",
+                                     happened_before: "2019-01-01",
+                                     kind: "expenses",
+                                     group_by: "tag_id",
+                                   }, headers: user.generate_auth_header
       expect(response).to have_http_status 200
       json = JSON.parse response.body
       expect(json["groups"].size).to eq 3
