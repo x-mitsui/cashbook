@@ -62,6 +62,7 @@ docker run -d -p 3000:3000 \
            -e DB_HOST=$DB_HOST \
            -e DB_PASSWORD=$DB_PASSWORD \
            -e RAILS_MASTER_KEY=$RAILS_MASTER_KEY \
+           -v ~/Documents/mangosteen_logs:/mangosteen/log \
            mangosteen:$version
 
 echo
