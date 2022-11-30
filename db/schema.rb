@@ -44,7 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_23_130303) do
 
   create_table "validation_codes", force: :cascade do |t|
     t.string "email"
-    t.string "kind"
+    t.integer "kind"
     t.datetime "used_at"
     t.string "code", limit: 100
     t.datetime "created_at", null: false
