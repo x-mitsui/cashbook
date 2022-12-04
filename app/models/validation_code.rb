@@ -12,6 +12,10 @@ class ValidationCode < ApplicationRecord
   end
 
   def send_email
-    UserMailer.welcome_email(self.email).deliver
+    if Rails.env.test?
+      UserMailer.welcome_email(self.email)
+    else
+      UserMailer.welcome_email(self.email).deliver
+    end
   end
 end

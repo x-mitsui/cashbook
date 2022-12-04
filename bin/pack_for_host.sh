@@ -9,6 +9,8 @@ gemfile=$current_dir/../Gemfile
 gemfile_lock=$current_dir/../Gemfile.lock
 vendor_dir=$current_dir/../vendor
 vendor_1=rspec_api_documentation
+api_dir=$current_dir/../doc/api 
+host_api_dir=/workspaces/$dir/mangosteen_local/doc/
 
 function title {
   echo 
@@ -42,6 +44,8 @@ title '上传 Dockerfile'
 cp $current_dir/../config/host.Dockerfile $deploy_dir/Dockerfile
 title '上传 setup 脚本'
 cp $current_dir/setup_host.sh $deploy_dir/
+title '上传 API 文档'
+cp -r $api_dir $host_api_dir/
 title '上传版本号'
 echo $time > $deploy_dir/version
 echo 'DONE!'

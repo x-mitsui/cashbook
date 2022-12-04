@@ -1,8 +1,10 @@
 root=mangosteen_deploy 
 version=$(cat $root/version)
+dir=oh-my-env
 
 container_name=mangosteen-prod-1
 db_container_name=db-for-mangosteen
+nginx_container_name=mangosteen-nginx-1
 
 DB_HOST=$db_container_name
 DB_PASSWORD=123456
@@ -62,7 +64,7 @@ docker run -d -p 3000:3000 \
            -e DB_HOST=$DB_HOST \
            -e DB_PASSWORD=$DB_PASSWORD \
            -e RAILS_MASTER_KEY=$RAILS_MASTER_KEY \
-           -v ~/Documents/mangosteen_logs:/mangosteen/log \
+           -v ~/Documents/$dir/mangosteen_local/logs:/mangosteen/log \
            mangosteen:$version
 
 echo
@@ -74,4 +76,17 @@ case $ans in
     ""     )  echo "no" ;;
 esac
 
+# 有就删除
+if [ "$(docker ps -aq -f name=^${nginx_container_name}$)" ]; then
+  title 'doc: docker rm'
+  docker rm -f $nginx_container_name
+fi
+
+# 再创建
+title 'doc: docker run'
+docker run -d -p 8080:80 \
+           --network=network1 \
+           --name=$nginx_container_name \
+           -v ~/Documents/$dir/mangosteen_local/doc/api:/usr/share/nginx/html:ro \
+           nginx:latest
 title '全部执行完毕'
