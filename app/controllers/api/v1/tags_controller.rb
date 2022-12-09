@@ -2,7 +2,7 @@ class Api::V1::TagsController < ApplicationController
   def index
     current_user = User.find request.env["current_user_id"]
     return render status: 401 if current_user.nil?
-    tags = Tag.where(user_id: current_user.id).page(params[:page])
+    tags = Tag.where(user_id: current_user.id).where(kind: params[:kind]).page(params[:page])
     render json: { resources: tags, pager: {
       page: params[:page] || 1, # 设置保底返回值为1
       per_page: Item.default_per_page, # 默认每页多少条数据
