@@ -1,143 +1,93 @@
-require "rails_helper"
+require 'rails_helper'
+require 'rspec_api_documentation/dsl'
 
-RSpec.describe "Api::V1::Tags", type: :request do
-  describe "获取标签列表" do
-    it "未登录获取标签" do
-      get "/api/v1/tags"
-      expect(response).to have_http_status(401)
+resource "标签" do
+  authentication :basic, :auth
+  let(:current_user) { create :user }
+  let(:auth) { "Bearer #{current_user.generate_jwt}" }
+  get "/api/v1/tags/:id" do
+    let (:tag) { create :tag, user: current_user }
+    let (:id) { tag.id }
+    with_options :scope => :resource do
+      response_field :id, 'ID'
+      response_field :name, "名称"
+      response_field :sign, "符号"
+      response_field :user_id, "用户ID"
+      response_field :deleted_at, "删除时间"
     end
-    it "登录后获取标签" do
-      user = create :user
-      another_user = create :user
-      11.times do |i| create :tag, name: "tag#{i}", user: user end
-      11.times do |i| create :tag, name: "tag#{i}", sign: "x" end
-
-      get "/api/v1/tags", headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resources"].size).to eq 10
-
-      get "/api/v1/tags", headers: user.generate_auth_header, params: { page: 2 }
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resources"].size).to eq 1
-    end
-    it "根据 kind 获取标签" do
-      user = create :user
-      11.times do |i| Tag.create name: "tag#{i}", user_id: user.id, sign: "x", kind: "expenses" end
-      11.times do |i| Tag.create name: "tag#{i}", user_id: user.id, sign: "x", kind: "income" end
-
-      get "/api/v1/tags", headers: user.generate_auth_header, params: { kind: "expenses" }
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resources"].size).to eq 10
-
-      get "/api/v1/tags", headers: user.generate_auth_header, params: { kind: "expenses", page: 2 }
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resources"].size).to eq 1
+    example "获取标签" do
+      do_request
+      expect(status).to eq 200
+      json = JSON.parse response_body
+      expect(json['resource']['id']).to eq tag.id
     end
   end
-  describe "获取标签" do
-    it "未登录获取标签" do
-      user = create :user
-      tag = Tag.create name: "tag1", user_id: user.id, sign: "x"
-      get "/api/v1/tags/#{tag.id}"
-      expect(response).to have_http_status(401)
+  get "/api/v1/tags" do
+    parameter :page, '页码'
+    parameter :kind, '类型', in: ['expenses', 'income']
+    with_options :scope => :resources do
+      response_field :id, 'ID'
+      response_field :name, "名称"
+      response_field :sign, "符号"
+      response_field :user_id, "用户ID"
+      response_field :deleted_at, "删除时间"
     end
-    it "登录后获取标签" do
-      user = create :user
-      tag = Tag.create name: "tag1", user_id: user.id, sign: "x"
-      get "/api/v1/tags/#{tag.id}", headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resource"]["id"]).to eq tag.id
-    end
-    it "登录后获取不属于自己的标签" do
-      user = create :user
-      another_user = create :user
-      tag = Tag.create name: "tag1", user_id: another_user.id, sign: "x"
-      get "/api/v1/tags/#{tag.id}", headers: user.generate_auth_header
-      expect(response).to have_http_status(403)
+    example "获取标签列表" do
+      11.times do create :tag, user: current_user end
+      do_request
+      expect(status).to eq 200
+      json = JSON.parse response_body
+      expect(json['resources'].size).to eq 10
     end
   end
-  describe "创建标签" do
-    it "未登录创建标签" do
-      post "/api/v1/tags", params: { name: "x", sign: "x" }
-      expect(response).to have_http_status(401)
+  post "/api/v1/tags" do
+    parameter :name, '名称', required: true
+    parameter :sign, '符号', required: true
+    with_options :scope => :resource do
+      response_field :id, 'ID'
+      response_field :name, "名称"
+      response_field :sign, "符号"
+      response_field :user_id, "用户ID"
+      response_field :deleted_at, "删除时间"
     end
-    it "登录后创建标签" do
-      user = create :user
-      post "/api/v1/tags", params: { name: "name", sign: "sign" }, headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resource"]["name"]).to eq "name"
-      expect(json["resource"]["sign"]).to eq "sign"
-    end
-    it "登录后创建标签失败，因为没填 name" do
-      user = create :user
-      post "/api/v1/tags", params: { sign: "sign" }, headers: user.generate_auth_header
-      expect(response).to have_http_status(422)
-      json = JSON.parse response.body
-      expect(json["errors"]["name"][0]).to eq "can't be blank"
-    end
-    it "登录后创建标签失败，因为没填 sign" do
-      user = create :user
-      post "/api/v1/tags", params: { name: "name" }, headers: user.generate_auth_header
-      expect(response).to have_http_status(422)
-      json = JSON.parse response.body
-      expect(json["errors"]["sign"][0]).to eq "can't be blank"
+    let (:name) { 'x' }
+    let (:sign) { 'x' }
+    example "创建标签" do
+      do_request
+      expect(status).to eq 200
+      json = JSON.parse response_body
+      expect(json['resource']['name']).to eq name
+      expect(json['resource']['sign']).to eq sign
     end
   end
-
-  describe "更新标签" do
-    it "未登录修改标签" do
-      user = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: user.id
-      patch "/api/v1/tags/#{tag.id}", params: { name: "y", sign: "y" }
-      expect(response).to have_http_status(401)
+  patch "/api/v1/tags/:id" do
+    let (:tag) { create :tag, user: current_user }
+    let (:id) { tag.id }
+    parameter :name, '名称'
+    parameter :sign, '符号'
+    with_options :scope => :resource do
+      response_field :id, 'ID'
+      response_field :name, "名称"
+      response_field :sign, "符号"
+      response_field :user_id, "用户ID"
+      response_field :deleted_at, "删除时间"
     end
-    it "登录后修改标签" do
-      user = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: user.id
-      patch "/api/v1/tags/#{tag.id}", params: { name: "y", sign: "y" }, headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resource"]["name"]).to eq "y"
-      expect(json["resource"]["sign"]).to eq "y"
-    end
-    it "登录后部分修改标签" do
-      user = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: user.id
-      patch "/api/v1/tags/#{tag.id}", params: { name: "y" }, headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resource"]["name"]).to eq "y"
-      expect(json["resource"]["sign"]).to eq "x"
+    let (:name) { 'y' }
+    let (:sign) { 'y' }
+    example "修改标签" do
+      do_request
+      expect(status).to eq 200
+      json = JSON.parse response_body
+      expect(json['resource']['name']).to eq name
+      expect(json['resource']['sign']).to eq sign
     end
   end
-
-  describe "删除标签" do
-    it "未登录删除标签" do
-      user = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: user.id
-      delete "/api/v1/tags/#{tag.id}"
-      expect(response).to have_http_status(401)
-    end
-    it "登录后删除标签" do
-      user = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: user.id
-      delete "/api/v1/tags/#{tag.id}", headers: user.generate_auth_header
-      expect(response).to have_http_status(200)
-      tag.reload
-      expect(tag.deleted_at).not_to eq nil
-    end
-    it "登录后删除别人的标签" do
-      user = create :user
-      other = create :user
-      tag = Tag.create name: "x", sign: "x", user_id: other.id
-      delete "/api/v1/tags/#{tag.id}", headers: user.generate_auth_header
-      expect(response).to have_http_status(403)
+  delete "/api/v1/tags/:id" do
+    let (:tag) { create :tag, user: current_user }
+    let (:id) { tag.id }
+    example "删除标签" do
+      do_request
+      expect(status).to eq 200
     end
   end
 end
