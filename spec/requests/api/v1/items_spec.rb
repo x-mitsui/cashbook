@@ -12,11 +12,12 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status 401
     end
     it "分页" do
-      user1 = User.create email: "1@qq.com"
+      user1 = User.create! email: "1@qq.com"
       user2 = User.create! email: "2@qq.com"
-      11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user1.id }
-      11.times { Item.create amount: 100, created_at: "2018-01-02", user_id: user2.id }
-
+      # 11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user1.id }
+      # 11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user2.id }
+      create_list :item, 11, amount: 100, user: user1, tags_id: [create(:tag, user: user1).id]
+      create_list :item, 11, amount: 100, user: user2, tags_id: [create(:tag, user: user2).id]
       # post "/api/v1/session", params: { email: user1.email, code: "123456" }
       # json = JSON.parse response.body
       # jwt = json["jwt"]

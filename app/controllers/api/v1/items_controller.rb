@@ -29,7 +29,8 @@ class Api::V1::ItemsController < ApplicationController
   def create
     # item = Item.new amount: params[:amount], tags_id: params[:tags_id], happened_at: params[:happened_at]
     item = Item.new params.permit(:amount, :happened_at, tags_id: [])
-    item.user_id = request.env["current_user_id"]
+    item.user_id = request.env["current_user_id"] # 逻辑上保证了Item中的self.user_id必存在
+    # 应该是在save的时候触发了Item自身的validate
     if item.save
       render json: { resource: item }
     else

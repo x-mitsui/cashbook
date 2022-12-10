@@ -3,6 +3,7 @@ zh-CN:
     errors:
       messages:
         invalid: 格式不正确
+        record_invalid: 记录无法保存
       models:
         validation_code:
           attributes:
