@@ -27,8 +27,8 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    # item = Item.new amount: params[:amount], tags_id: params[:tags_id], happened_at: params[:happened_at]
-    item = Item.new params.permit(:amount, :happened_at, tags_id: [])
+    # item = Item.new amount: params[:amount], tag_ids: params[:tag_ids], happened_at: params[:happened_at]
+    item = Item.new params.permit(:amount, :happened_at, tag_ids: [])
     item.user_id = request.env["current_user_id"] # 逻辑上保证了Item中的self.user_id必存在
     # 应该是在save的时候触发了Item自身的validate
     if item.save
@@ -51,7 +51,7 @@ class Api::V1::ItemsController < ApplicationController
         hash[key] ||= 0
         hash[key] += item.amount
       else
-        item.tags_id.each do |tag_id|
+        item.tag_ids.each do |tag_id|
           key = tag_id
           hash[key] ||= 0
           hash[key] += item.amount
