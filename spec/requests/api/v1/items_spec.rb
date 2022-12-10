@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe "Items", type: :request do
   describe "获取账目" do
     it "分页，未登录" do
-      user1 = User.create email: "1@qq.com"
-      user2 = User.create email: "2@qq.com"
+      user1 = create :user
+      user2 = create :user
       11.times { Item.create amount: 100, user_id: user1.id }
       11.times { Item.create amount: 100, user_id: user2.id }
       get "/api/v1/items"
@@ -12,8 +12,8 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status 401
     end
     it "分页" do
-      user1 = User.create! email: "1@qq.com"
-      user2 = User.create! email: "2@qq.com"
+      user1 = create :user
+      user2 = create :user
       # 11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user1.id }
       # 11.times { Item.create! amount: 100, created_at: "2018-01-02", user_id: user2.id }
       create_list :item, 11, amount: 100, user: user1, tag_ids: [create(:tag, user: user1).id]
@@ -33,7 +33,7 @@ RSpec.describe "Items", type: :request do
       expect(json["resources"].size).to eq 1
     end
     it "按时间筛选" do
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       item1 = Item.create amount: 100, created_at: "2018-01-02", user_id: user1.id
       item2 = Item.create amount: 100, created_at: "2018-01-02", user_id: user1.id
       item3 = Item.create amount: 100, created_at: "2019-01-01", user_id: user1.id
@@ -47,7 +47,7 @@ RSpec.describe "Items", type: :request do
       expect(json["resources"][1]["id"]).to eq item2.id
     end
     it "按时间筛选(时间边界测试)" do
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       item1 = Item.create amount: 100, created_at: "2018-01-01", user_id: user1.id
       get "/api/v1/items?created_after=2018-01-01&created_before=2018-01-03",
           headers: user1.get_auth_header
@@ -58,7 +58,7 @@ RSpec.describe "Items", type: :request do
       expect(json["resources"][0]["id"]).to eq item1.id
     end
     it "按时间筛选(时间边界测试1)" do
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       item1 = Item.create amount: 100, created_at: "2018-01-01", user_id: user1.id
       item2 = Item.create amount: 100, created_at: "2017-01-01", user_id: user1.id
       get "/api/v1/items?created_after=2018-01-01",
@@ -70,7 +70,7 @@ RSpec.describe "Items", type: :request do
       expect(json["resources"][0]["id"]).to eq item1.id
     end
     it "按时间筛选(时间边界测试2)" do
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       item1 = Item.create amount: 100, created_at: "2017-01-01", user_id: user1.id
       item2 = Item.create amount: 100, created_at: "2019-01-01", user_id: user1.id
       get "/api/v1/items?created_before=2018-01-01",
@@ -88,7 +88,7 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status 401
     end
     it "登录后创建" do
-      user = User.create email: "1@qq.com"
+      user = create :user
       tag1 = Tag.create name: "tag1", sign: "x", user_id: user.id
       tag2 = Tag.create name: "tag2", sign: "x", user_id: user.id
       expect {
@@ -105,7 +105,7 @@ RSpec.describe "Items", type: :request do
       expect(json["resource"]["happened_at"]).to eq "2017-12-31T16:00:00.000Z"
     end
     it "创建时 amount、tag_ids、happened_at 必填" do
-      user = User.create email: "1@qq.com"
+      user = create :user
       post "/api/v1/items", params: {}, headers: user.get_auth_header
       expect(response).to have_http_status 422
       json = JSON.parse response.body
@@ -116,7 +116,7 @@ RSpec.describe "Items", type: :request do
   end
   describe "统计数据" do
     it "按天分组" do
-      user = User.create! email: "1@qq.com"
+      user = create :user
       tag = Tag.create! name: "tag1", sign: "x", user_id: user.id
       # 注意金额单位为"分"
       # 数据的创建时间故意混乱，以便测试排序
@@ -145,7 +145,7 @@ RSpec.describe "Items", type: :request do
       expect(json["total"]).to eq 900
     end
     it "按标签ID分组" do
-      user = User.create! email: "1@qq.com"
+      user = create :user
       tag1 = Tag.create! name: "tag1", sign: "x", user_id: user.id
       tag2 = Tag.create! name: "tag2", sign: "x", user_id: user.id
       tag3 = Tag.create! name: "tag3", sign: "x", user_id: user.id

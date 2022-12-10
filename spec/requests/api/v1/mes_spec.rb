@@ -4,7 +4,7 @@ RSpec.describe "Me", type: :request do
   include ActiveSupport::Testing::TimeHelpers
   describe "获取当前用户" do
     it "登录后成功获取" do
-      user = User.create email: "x_mitsui@163.com.com"
+      user = create :user
       post "/api/v1/session", params: { email: "x_mitsui@163.com.com", code: "123456" }
       json = JSON.parse response.body
       jwt = json["jwt"]
@@ -16,7 +16,7 @@ RSpec.describe "Me", type: :request do
     end
     it "jwt过期" do
       travel_to Time.now - 3.hours
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       jwt = user1.generate_jwt
 
       travel_back
@@ -25,7 +25,7 @@ RSpec.describe "Me", type: :request do
     end
     it "jwt没过期" do
       travel_to Time.now - 1.hours
-      user1 = User.create email: "1@qq.com"
+      user1 = create :user
       jwt = user1.generate_jwt
 
       travel_back

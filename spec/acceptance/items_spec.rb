@@ -2,7 +2,7 @@ require "rails_helper"
 require "rspec_api_documentation/dsl"
 
 resource "账目" do
-  # let(:current_user) { User.create email: "1@qq.com" }
+  # let(:current_user) { create :user }
   let(:current_user) { create :user }
 
   let(:auth) { "Bearer #{current_user.generate_jwt}" }
