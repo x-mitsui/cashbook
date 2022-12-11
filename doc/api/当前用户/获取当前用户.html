@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>标签 API</title>
+    <title>当前用户 API</title>
     <meta charset="utf-8">
     <style>
       
@@ -106,11 +106,11 @@ table th, table td {
   </head>
   <body>
     <div class="container">
-      <h1>标签 API</h1>
+      <h1>当前用户 API</h1>
 
       <div class="article">
-        <h2>删除标签</h2>
-        <h3>DELETE /api/v1/tags/:id</h3>
+        <h2>获取当前用户</h2>
+        <h3>GET /api/v1/me</h3>
 
 
 
@@ -118,14 +118,14 @@ table th, table td {
 
             <h4>Headers</h4>
             <pre class="request headers">Version: HTTP/1.0
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozOTksImV4cCI6MTY3MDc3NzA2N30.r6QsYaErnvwrCkNj7uOIFJTky0ZBCiTe0mZxDNxRNwg
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozOTMsImV4cCI6MTY3MDc3NzA2Nn0.nzYGKmlfCkLL6WcjLygyX2i77oXpBVu63180GNNFXB4
 Accept: application/json
 Content-Type: application/json
 Host: example.org
 Cookie: </pre>
 
           <h4>Route</h4>
-          <pre class="request route highlight">DELETE /api/v1/tags/962</pre>
+          <pre class="request route highlight">GET /api/v1/me</pre>
 
 
 
@@ -138,13 +138,25 @@ X-Content-Type-Options: nosniff
 X-Download-Options: noopen
 X-Permitted-Cross-Domain-Policies: none
 Referrer-Policy: strict-origin-when-cross-origin
-Content-Type: application/json
-Cache-Control: no-cache
-X-Request-Id: 16c05cbe-31d1-4230-857e-6ae8fa3ab2bc
-X-Runtime: 0.011439
-Content-Length: 0</pre>
+Content-Type: application/json; charset=utf-8
+Vary: Accept
+ETag: W/&quot;0638d0a018b7d334d47aa14f2d6c4610&quot;
+Cache-Control: max-age=0, private, must-revalidate
+X-Request-Id: 9ac3a325-ec16-48f7-97c6-ea435aec62e8
+X-Runtime: 0.008041
+Content-Length: 151</pre>
             <h4>Status</h4>
             <pre class="response status">200 OK</pre>
+              <h4>Body</h4>
+              <pre class="response body">{
+  &quot;resource&quot;: {
+    &quot;id&quot;: 393,
+    &quot;email&quot;: &quot;sidney_bruen@emmerich.biz&quot;,
+    &quot;name&quot;: null,
+    &quot;created_at&quot;: &quot;2022-12-11T14:44:26.725Z&quot;,
+    &quot;updated_at&quot;: &quot;2022-12-11T14:44:26.725Z&quot;
+  }
+}</pre>
       </div>
     </div>
   </body>
