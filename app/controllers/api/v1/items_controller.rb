@@ -18,7 +18,8 @@ class Api::V1::ItemsController < ApplicationController
     items = Item.where({ user_id: current_user_id })
     # .where({ created_at: params[:created_after]..params[:created_before] })
       .where({ happened_at: params[:happened_after]..params[:happened_before] })
-      .page(params[:page])
+    items = items.where(kind: params[:kind]) unless params[:kind].blank?
+    items = items.page(params[:page])
 
     render json: { resources: items, pager: {
       page: params[:page] || 1, # 设置保底返回值为1
@@ -28,8 +29,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    # item = Item.new amount: params[:amount], tag_ids: params[:tag_ids], happened_at: params[:happened_at]
-    item = Item.new params.permit(:amount, :happened_at, tag_ids: [])
+    item = Item.new params.permit(:amount, :happened_at, :kind, tag_ids: [])
     item.user_id = request.env["current_user_id"] # 逻辑上保证了Item中的self.user_id必存在
     # 应该是在save的时候触发了Item自身的validate
     if item.save
@@ -43,7 +43,7 @@ class Api::V1::ItemsController < ApplicationController
     current_user_id = request.env["current_user_id"]
     return head :unauthorized if current_user_id.nil?
     items = Item.where({ user_id: current_user_id })
-      .where({ happen_at: params[:happen_after]..params[:happen_before] })
+      .where({ happened_at: params[:happened_after]..params[:happened_before] })
     income_items = []
     expenses_items = []
     items.each { |item|

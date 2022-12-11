@@ -9,6 +9,10 @@ zh-CN:
           attributes:
             email:
               invalid: 邮件地址格式不正确
+        item:
+          attributes:
+            happened_at:
+              blank: item的happened_at属性为空
   activemodel:
     errors:
       messages:

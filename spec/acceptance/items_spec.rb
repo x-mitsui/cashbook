@@ -43,7 +43,6 @@ resource "账目" do
     let(:happened_at) { "2020-10-30T00:00:00+08:00" }
     let(:tags) { (0..1).map { create :tag, user: current_user } }
     let(:tag_ids) { tags.map(&:id) }
-    let(:happened_at) { "2020-10-30T00:00:00+08:00" }
     example "创建账目" do
       do_request
       expect(status).to eq 200

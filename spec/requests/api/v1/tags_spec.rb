@@ -8,18 +8,11 @@ RSpec.describe "Api::V1::Tags", type: :request do
     end
     it "登录后获取标签" do
       user = create :user
-      another_user = create :user
-      create_list :tag, Tag.default_per_page + 1, user: user
-
-      get "/api/v1/tags", headers: user.get_auth_header
+      post "/api/v1/tags", params: { name: "name", sign: "sign", kind: "expenses" }, headers: user.get_auth_header
       expect(response).to have_http_status(200)
       json = JSON.parse response.body
-      expect(json["resources"].size).to eq Tag.default_per_page
-
-      get "/api/v1/tags", headers: user.get_auth_header, params: { page: 2 }
-      expect(response).to have_http_status(200)
-      json = JSON.parse response.body
-      expect(json["resources"].size).to eq 1
+      expect(json["resource"]["name"]).to eq "name"
+      expect(json["resource"]["sign"]).to eq "sign"
     end
     it "根据 kind 获取标签" do
       user = create :user
@@ -65,7 +58,7 @@ RSpec.describe "Api::V1::Tags", type: :request do
     end
     it "登录后创建标签" do
       user = create :user
-      post "/api/v1/tags", params: { name: "name", sign: "sign" }, headers: user.get_auth_header
+      post "/api/v1/tags", params: { name: "name", sign: "sign", kind: "expenses" }, headers: user.get_auth_header
       expect(response).to have_http_status(200)
       json = JSON.parse response.body
       expect(json["resource"]["name"]).to eq "name"
@@ -80,7 +73,7 @@ RSpec.describe "Api::V1::Tags", type: :request do
     end
     it "登录后创建标签失败，因为没填 sign" do
       user = create :user
-      post "/api/v1/tags", params: { name: "name" }, headers: user.get_auth_header
+      post "/api/v1/tags", params: { name: "name", kind: "expenses" }, headers: user.get_auth_header
       expect(response).to have_http_status(422)
       json = JSON.parse response.body
       expect(json["errors"]["sign"][0]).to be_a String
