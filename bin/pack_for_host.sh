@@ -23,6 +23,11 @@ function title {
 yes | rm tmp/mangosteen-*.tar.gz; 
 yes | rm $deploy_dir/mangosteen-*.tar.gz; 
 
+title '运行测试用例'
+rspec || exit 1
+title '重新生成文档'
+bin/rails docs:generate || exit 2
+
 title '打包源代码'
 tar --exclude="tmp/cache/*" --exclude="tmp/deploy_cache/*" --exclude="vendor/*" -cz -f $dist *
 title "打包本地依赖 ${vendor_1}"
