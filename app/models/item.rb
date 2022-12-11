@@ -19,4 +19,8 @@ class Item < ApplicationRecord
       self.errors.add :tag_ids, "不属于当前用户"
     end
   end
+
+  def tags
+    Tag.where(id: tag_ids)
+  end
 end

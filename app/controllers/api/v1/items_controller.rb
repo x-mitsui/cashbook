@@ -25,7 +25,7 @@ class Api::V1::ItemsController < ApplicationController
       page: params[:page] || 1, # 设置保底返回值为1
       per_page: Item.default_per_page, # 默认每页多少条数据
       count: Item.count,
-    } }
+    } }, methods: :tags
   end
 
   def create
