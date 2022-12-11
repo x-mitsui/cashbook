@@ -54,6 +54,9 @@ class Api::V1::TagsController < ApplicationController
     # 不要真删除，只更新字段
     tag.deleted_at = Time.now
     if tag.save
+      if params[:with_items]
+        Item.where("tag_ids && ARRAY[?]::bigint[]", [tag.id]).destroy_all
+      end
       head 200
     else
       render json: { errors: tag.errors }, status: :unprocessable_entity
