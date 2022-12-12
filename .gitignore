@@ -96,5 +96,4 @@ db/schema.rb
 vendor/cache/mustache-1.1.1.gem
 vendor/cache/rspec_api_documentation-6.1.0.gem
 vendor/cache/rspec-3.11.0.gem
-doc/api/验证码/请求发送验证码.html
-doc/api/验证码/请求发送验证码.html
+/doc/api
