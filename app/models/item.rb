@@ -24,4 +24,9 @@ class Item < ApplicationRecord
   def tags
     Tag.where(id: tag_ids)
   end
+
+  # 删除的item也不再显示
+  def self.default_scope
+    where(deleted_at: nil)
+  end
 end
